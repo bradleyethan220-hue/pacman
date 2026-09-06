@@ -1,73 +1,94 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-let pac = { x: 300, y: 300, speed: 3 };
-let ghost = { x: 100, y: 100 };
+let player = { x: 1, y: 1 };
+let monster = { x: 14, y: 9 };
 
 let keys = {};
 
 document.addEventListener("keydown", e => keys[e.key] = true);
 document.addEventListener("keyup", e => keys[e.key] = false);
 
-function movePac() {
-    if (keys["ArrowUp"]) pac.y -= pac.speed;
-    if (keys["ArrowDown"]) pac.y += pac.speed;
-    if (keys["ArrowLeft"]) pac.x -= pac.speed;
-    if (keys["ArrowRight"]) pac.x += pac.speed;
+function movePlayer() {
+    let nx = player.x;
+    let ny = player.y;
+
+    if (keys["w"]) ny--;
+    if (keys["s"]) ny++;
+    if (keys["a"]) nx--;
+    if (keys["d"]) nx++;
+
+    if (maze[ny] && maze[ny][nx] === 0) {
+        player.x = nx;
+        player.y = ny;
+    }
 }
 
-function moveGhost() {
-    // ghost teleports randomly
-    if (Math.random() < 0.01) {
-        ghost.x = Math.random() * 600;
-        ghost.y = Math.random() * 600;
+function moveMonster() {
+    // simple chase AI
+    let dx = player.x - monster.x;
+    let dy = player.y - monster.y;
+
+    if (Math.abs(dx) > Math.abs(dy)) {
+        monster.x += Math.sign(dx);
+    } else {
+        monster.y += Math.sign(dy);
     }
 
-    // ghost slowly follows pac
-    ghost.x += (pac.x - ghost.x) * 0.01;
-    ghost.y += (pac.y - ghost.y) * 0.01;
+    // prevent walking through walls
+    if (maze[monster.y][monster.x] === 1) {
+        monster.x -= Math.sign(dx);
+        monster.y -= Math.sign(dy);
+    }
 }
 
-function draw() {
-    ctx.fillStyle = "#000";
-    ctx.fillRect(0, 0, 600, 600);
+function drawMaze() {
+    for (let y = 0; y < maze.length; y++) {
+        for (let x = 0; x < maze[y].length; x++) {
+            ctx.fillStyle = maze[y][x] === 1 ? "#222" : "#000";
+            ctx.fillRect(x*TILE, y*TILE, TILE, TILE);
+        }
+    }
+}
 
-    // Pac-Man
+function drawPlayer() {
     ctx.fillStyle = "yellow";
     ctx.beginPath();
-    ctx.arc(pac.x, pac.y, 15, 0, Math.PI * 2);
+    ctx.arc(player.x*TILE+20, player.y*TILE+20, 15, 0, Math.PI*2);
+    ctx.fill();
+}
+
+function drawMonster() {
+    ctx.fillStyle = "yellow";
+    ctx.beginPath();
+    ctx.arc(monster.x*TILE+20, monster.y*TILE+20, 20, 0, Math.PI*2);
     ctx.fill();
 
-    // Ghost
-    ctx.fillStyle = "red";
-    ctx.beginPath();
-    ctx.arc(ghost.x, ghost.y, 20, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.fillStyle = "black";
+    ctx.fillRect(monster.x*TILE+10, monster.y*TILE+10, 10, 10);
+    ctx.fillRect(monster.x*TILE+30, monster.y*TILE+10, 10, 10);
+    ctx.fillRect(monster.x*TILE+15, monster.y*TILE+30, 20, 5);
 }
 
 function checkDeath() {
-    const dx = pac.x - ghost.x;
-    const dy = pac.y - ghost.y;
-    const dist = Math.sqrt(dx*dx + dy*dy);
-
-    if (dist < 25) {
-        triggerJumpscare();
+    if (player.x === monster.x && player.y === monster.y) {
+        alert("THE SMILEY GOT YOU");
+        location.reload();
     }
 }
 
-function triggerJumpscare() {
-    document.getElementById("jumpscare").classList.add("show");
-    setTimeout(() => {
-        alert("THANK YOU FOR PLAYING");
-    }, 1500);
-}
+function loop() {
+    movePlayer();
+    moveMonster();
 
-function gameLoop() {
-    movePac();
-    moveGhost();
-    draw();
+    ctx.clearRect(0,0,640,640);
+
+    drawMaze();
+    drawPlayer();
+    drawMonster();
     checkDeath();
-    requestAnimationFrame(gameLoop);
+
+    requestAnimationFrame(loop);
 }
 
-gameLoop();
+loop();
