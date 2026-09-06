@@ -1,22 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Cursed Pac-Man</title>
+    <title>Cursed Maze Chase</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<canvas id="gameCanvas" width="600" height="600"></canvas>
+<canvas id="gameCanvas" width="640" height="640"></canvas>
 
 <div id="popupContainer"></div>
 
-<div id="jumpscare" class="hidden">
-    <div class="static"></div>
-    <h1>YOU CAN'T ESCAPE</h1>
-    <img src="images/face.png" class="scare-face">
-</div>
-
+<script src="maze.js"></script>
 <script src="popups.js"></script>
 <script src="game.js"></script>
+
 </body>
 </html>
