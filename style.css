@@ -2,7 +2,6 @@ body {
     background: black;
     margin: 0;
     overflow: hidden;
-    font-family: Arial;
 }
 
 #gameCanvas {
@@ -14,50 +13,20 @@ body {
 
 .popup {
     position: absolute;
-    width: 220px;
-    height: 100px;
+    width: 260px;
+    height: 120px;
     background: #1a1a1a;
-    border: 2px solid white;
-    color: red;
+    border: 3px solid red;
+    color: white;
     padding: 10px;
-    box-shadow: 0 0 10px red;
+    font-size: 18px;
+    box-shadow: 0 0 15px red;
     animation: shake 0.2s infinite;
 }
 
 @keyframes shake {
     0% { transform: translate(0,0); }
-    50% { transform: translate(2px,-2px); }
-    100% { transform: translate(-2px,2px); }
+    50% { transform: translate(3px,-3px); }
+    100% { transform: translate(-3px,3px); }
 }
 
-#jumpscare {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: black;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    opacity: 0;
-    transition: opacity 0.3s;
-}
-
-#jumpscare.show {
-    opacity: 1;
-}
-
-.static {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: url("images/static.gif");
-    opacity: 0.3;
-}
-
-.scare-face {
-    width: 300px;
-    filter: drop-shadow(0 0 20px red);
-}
